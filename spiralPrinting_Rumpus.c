@@ -1,7 +1,7 @@
 /*
  * CodeEval Challenge
  * BitTorrent
- * GRIDWALK
+ * SPIRALPRINTING
  * Ben Postlethwaite
  * post.ben.here@gmail.com
  * 2013
@@ -37,35 +37,77 @@ int main(int argc, char *argv[]) {
 
   FILE * f;
   char line[BUFFLEN];
+  char buff[BUFFLEN];
   int dim[NUMDIMS];
   char *s;
+  int ix;
+  int pcount;
+  int N, n, M, m, row, col;
 
-  if (argc < 2) {
-    printf("Need file name argument\n");
+  if (argc < 2 || !(f = fopen(argv[1], "r"))) {
+    fprintf(stderr, "Unable to open file argument\n");
     return 1;
   }
 
-  f = fopen(argv[1], "r");
-  {
-    while (fgets(line, BUFFLEN, f)) {
+  while (fgets(line, BUFFLEN, f)) {
 
-
-      // Skip empty lines
-      if (line[0] == '\n') {
-        continue;
-      }
-
-      s = getDims(line, dim, NUMDIMS);
-
-      for(; *s != '\0'; s++) {
-        if (*s == ' ' || *s == ';')
-          continue;
-        printf("%c", *s);
-      }
+    ix = pcount = 0;
+    // Skip empty lines
+    if (line[0] == '\n') {
+      continue;
     }
+
+    s = getDims(line, dim, NUMDIMS);
+
+    // For this 2D problem
+    N = dim[0];
+    M = dim[1];
+
+    //remove spaces and count length.
+    for(; *s != '\0'; s++) {
+      if (*s == ' ' || *s == ';')
+        continue;
+      buff[ix++] = *s;
+
+    }
+    buff[ix] = '\0';
+
+    n = N;
+    m = M;
+    while (pcount < ix - 1 ) {
+      // Along top row
+      for (row = N - n, col = M - m; col < m; col++) {
+        printf(" %c", buff[ row * M + col ]);
+        pcount++;
+      }
+      // Down back side
+      if (2 * n - N > 2) {
+        for (col = m - 1, row = N - n + 1; row < n - 1; row++) {
+          printf(" %c", buff[ row * M + col ]);
+          pcount++;
+        }
+      }
+      if (pcount == ix - 1)
+        break;
+      // reverse along bottom row
+      for (row = n - 1, col = m - 1; col >= M - m; col--) {
+        printf(" %c", buff[ row * M + col ]);
+        pcount++;
+      }
+      // Up along front side (reverse)
+      if (2 * n - N > 2) {
+        for (col = M - m, row = n - 2; row >= N - n + 1 ; row--) {
+          printf(" %c", buff[ row * M + col ]);
+          pcount++;
+        }
+      }
+      n--;
+      m--;
+    }
+    printf("\n");
   }
 
-   return 0;
+  return 0;
 }
 
 
