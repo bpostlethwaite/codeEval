@@ -46,4 +46,4 @@ function decode (msg) {
 
 var message = "012222 1114142503 0313012513 03141418192102 0113 2419182119021713 06131715070119"
 
-decode(message)
+console.log(decode(message))

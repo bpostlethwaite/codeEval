@@ -26,23 +26,35 @@ Print out the matrix in clockwise fashion, one per line, space delimited. eg.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+//#include <ctype.h>
+#include <string.h>
 
 #define BUFFLEN 1024
-#define NUMDIMS 2
 
-char * getDims(char *, int *, int);
+void getDims(char *line, int * dim) {
+
+  int len;
+
+}
+
 
 int main(int argc, char *argv[]) {
 
   FILE * f;
   char line[BUFFLEN];
-  char buff[BUFFLEN];
-  int dim[NUMDIMS];
-  char *s;
-  int ix;
-  int pcount;
-  int N, n, M, m, row, col;
+  int buff[BUFFLEN];
+  int dim[2];
+  char *sep = " ";
+  char *s, *rest, *token;
+  int ix, FIRST = 1;
+  int pcount, len;
+  int j, N, n, M, m, row, col;
+
+
+
+  char hello[] = "Hello World, Let me live."; // make this a char array not a pointer to literal.
+  char *ptr = hello; // make q point to start of hello.
+
 
   if (argc < 2 || !(f = fopen(argv[1], "r"))) {
     fprintf(stderr, "Unable to open file argument\n");
@@ -50,34 +62,53 @@ int main(int argc, char *argv[]) {
   }
 
   while (fgets(line, BUFFLEN, f)) {
-
+    FIRST = 1;
     ix = pcount = 0;
     // Skip empty lines
     if (line[0] == '\n') {
       continue;
     }
 
-    s = getDims(line, dim, NUMDIMS);
+    /*
+     * Get Character array
+     */
+    // loop till strtok_r returns NULL.
+    while(token = strtok_r(ptr, " ,", &rest)) {
 
-    // For this 2D problem
-    N = dim[0];
-    M = dim[1];
-
-    //remove spaces and count length.
-    for(; *s != '\0'; s++) {
-      if (*s == ' ' || *s == ';')
-        continue;
-      buff[ix++] = *s;
-
+      printf("%s\n", token); // print the token returned.
+      ptr = rest; // rest contains the left over part..assign it to ptr...and start tokenizing again.
     }
-    buff[ix] = '\0';
+    /* char *ptr = line; */
+    /* for (token = strtok_r(ptr, sep, &saveptr); */
+    /*      token; */
+    /*      token = strtok_r(NULL, sep, &saveptr)) */
+    /*   { */
+    /*     printf("got token %s\n", token); */
+    /*   } */
+    break;
 
-    n = N;
-    m = M;
+
+    /* for (j = 1; ; j++, line[0] = NULL) { */
+    /*   token = strtok_r(line, sep, &saveptr1); */
+    /*   if (token == NULL) */
+    /*     break; */
+    /*   printf("%d: %s\n", j, token); */
+    /* } */
+
+
+    n = N = dim[0];
+    m = M = dim[1];
+
+
     while (pcount < ix - 1 ) {
       // Along top row
       for (row = N - n, col = M - m; col < m; col++) {
-        printf(" %c", buff[ row * M + col ]);
+        if (FIRST) {
+          printf("%c", buff[ row * M + col ]);
+          FIRST = 0;
+        }
+        else
+          printf(" %c", buff[ row * M + col ]);
         pcount++;
       }
       // Down back side
@@ -107,18 +138,8 @@ int main(int argc, char *argv[]) {
     printf("\n");
   }
 
+  fclose(f);
   return 0;
 }
 
 
-char * getDims(char *s, int * dim, int n) {
-  int dx = 0;
-  for(; *s != '\0'; s++) {
-    if ( (*s != ' ' || *s != ';') && isdigit(*s)) {
-      dim[dx] = *s - '0';
-      dx++;
-    }
-    if (dx == n)
-      return (s+2); //To move past the last dx and the ;
-  }
-}
