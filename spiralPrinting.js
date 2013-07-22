@@ -5,6 +5,7 @@ var data = fs.readFileSync(process.argv[2]).toString().split("\n")
 
 data.forEach( function (line) {
 
+  console.log(line)
   var arr = line.split(";")
   if (arr.length < 2) return;
 

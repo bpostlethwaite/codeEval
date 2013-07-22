@@ -3,7 +3,9 @@ var at = require("arraytools");
 
 
 var nx = 6
-var ny = 5
+var ny = 2
+
+
 
 var a = []
 
